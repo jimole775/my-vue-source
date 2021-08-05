@@ -41,7 +41,8 @@ export function createFnInvoker (fns: Function | Array<Function>): Function {
   invoker.fns = fns
   return invoker
 }
-// 更新监听事件，包括覆盖替换逻辑
+// 更新监听事件，事件类型包括 click，hover 一类的dom的互动事件
+// 也包括使用 vm.$on() 声明的监听事件
 export function updateListeners (
   on: Object,
   oldOn: Object,
