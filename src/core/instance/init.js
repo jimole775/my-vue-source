@@ -36,6 +36,7 @@ export function initMixin (Vue: Class<Component>) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
+      // 把 options 赋值到 vm.$options
       initInternalComponent(vm, options)
     } else {
       console.log('equal?:', vm.constructor === Vue)
@@ -100,7 +101,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
   // 可以从参数项找到答案 Ctor: Class<Component> => /flow/component.js:5
   let options = Ctor.options
   if (Ctor.super) {
-    // 一直追溯到最顶层的构造器
+    // 递归一直追溯到最顶层的构造器
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
     if (superOptions !== cachedSuperOptions) {
@@ -117,6 +118,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
         extend(Ctor.extendOptions, modifiedOptions)
       }
       options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)
+      debugger
       if (options.name) {
         options.components[options.name] = Ctor
       }
