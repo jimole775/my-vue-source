@@ -58,10 +58,10 @@ export function initMixin (Vue: Class<Component>) {
     // expose real self
     vm._self = vm
     initLifecycle(vm) // 初始化基础属性
-    initEvents(vm) // 绑定 options._parentListeners 的事件，如果没有就忽略
-    initRender(vm) // 
-    callHook(vm, 'beforeCreate') // 
-    initInjections(vm) // resolve injections before data/props
+    initEvents(vm) // 绑定 dom 事件
+    initRender(vm) // 绑定 $createElement 方法
+    callHook(vm, 'beforeCreate') // 调用钩子
+    initInjections(vm) // 处理 inject 属性，resolve injections before data/props
     initState(vm) // 
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
@@ -72,7 +72,7 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
+    // 如果有 el 属性，就自动挂载（$mount）
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
