@@ -134,8 +134,11 @@ export function hasOwn (obj: Object | Array<*>, key: string): boolean {
 
 /**
  * Create a cached version of a pure function.
+ * 用内存换性能
  */
 export function cached<F: Function> (fn: F): F {
+  // 用闭包的方式封装一个缓存，每生成一个快捷函数，就伴随一个缓存map
+  // 会根据参数的值来判断是否使用缓存数据
   const cache = Object.create(null)
   return (function cachedFn (str: string) {
     const hit = cache[str]
