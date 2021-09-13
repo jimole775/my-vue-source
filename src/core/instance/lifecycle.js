@@ -173,6 +173,7 @@ export function mountComponent (
 
   let updateComponent
   /* istanbul ignore if */
+  // 确认是否进行性能测试，测试方案基于浏览器的window.performance对象，默认为false
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
     updateComponent = () => {
       const name = vm._name

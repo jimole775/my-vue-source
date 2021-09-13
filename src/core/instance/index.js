@@ -14,10 +14,10 @@ function Vue (options) {
   this._init(options)
 }
 
-initMixin(Vue)
-stateMixin(Vue)
-eventsMixin(Vue)
-lifecycleMixin(Vue)
-renderMixin(Vue)
+initMixin(Vue) // 初始化vue的所有属性
+stateMixin(Vue) // 定义$watch，用于手动启用watch属性，生成Watcher实例
+eventsMixin(Vue) // 绑定监听事件，$on, $off, $emit, $once
+lifecycleMixin(Vue) // 
+renderMixin(Vue) // 
 
 export default Vue

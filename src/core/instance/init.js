@@ -61,8 +61,8 @@ export function initMixin (Vue: Class<Component>) {
     initEvents(vm) // 绑定 dom 事件
     initRender(vm) // 绑定 $createElement 方法
     callHook(vm, 'beforeCreate') // 调用钩子
-    initInjections(vm) // 处理 inject 属性，resolve injections before data/props
-    initState(vm) // 
+    initInjections(vm) // 初始化 inject 属性，resolve injections before data/props
+    initState(vm) // 初始化响应式属性，包括 data,props,methods,watch,computed
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 
@@ -118,7 +118,6 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
         extend(Ctor.extendOptions, modifiedOptions)
       }
       options = Ctor.options = mergeOptions(superOptions, Ctor.extendOptions)
-      debugger
       if (options.name) {
         options.components[options.name] = Ctor
       }

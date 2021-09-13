@@ -179,7 +179,7 @@ function initComputed (vm: Component, computed: Object) {
       // create internal watcher for the computed property.
       watchers[key] = new Watcher(
         vm,
-        getter || noop,
+        getter || noop, // computed的getter被当做handler注册到了wather
         noop,
         computedWatcherOptions
       )
@@ -188,6 +188,7 @@ function initComputed (vm: Component, computed: Object) {
     // component-defined computed properties are already defined on the
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
+    // 判断实例中有没有重复的key
     if (!(key in vm)) {
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
@@ -237,6 +238,8 @@ function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
+      // watcher.dirty为true，则代表数据由更新
+      // 使用 watcher.evaluate() 重新计算 watcher.value
       if (watcher.dirty) {
         watcher.evaluate()
       }
@@ -279,6 +282,7 @@ function initMethods (vm: Component, methods: Object) {
 function initWatch (vm: Component, watch: Object) {
   for (const key in watch) {
     const handler = watch[key]
+    // 一个属性可以绑定多个监听器
     if (Array.isArray(handler)) {
       for (let i = 0; i < handler.length; i++) {
         createWatcher(vm, key, handler[i])
@@ -293,12 +297,14 @@ function createWatcher (
   vm: Component,
   keyOrFn: string | Function,
   handler: any,
-  options?: Object
+  options?: Object // 这个参数给递归用的
 ) {
+  // 如果是对象类型，handler是必要存在
   if (isPlainObject(handler)) {
     options = handler
     handler = handler.handler
   }
+  // 如果是字符串类型，默认为vm实例的属性
   if (typeof handler === 'string') {
     handler = vm[handler]
   }
@@ -331,21 +337,25 @@ export function stateMixin (Vue: Class<Component>) {
   Vue.prototype.$set = set
   Vue.prototype.$delete = del
 
+  // 封装一个监听函数，让实例可主动调用
   Vue.prototype.$watch = function (
     expOrFn: string | Function,
     cb: any,
     options?: Object
   ): Function {
     const vm: Component = this
+    // 递归处理 watch: { a: [{handler: fn}]} 这种参数类型的情况
     if (isPlainObject(cb)) {
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
     options.user = true
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    // 立即执行
     if (options.immediate) {
       cb.call(vm, watcher.value)
     }
+    // 返回一个解绑函数
     return function unwatchFn () {
       watcher.teardown()
     }

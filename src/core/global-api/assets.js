@@ -13,6 +13,7 @@ export function initAssetRegisters (Vue: GlobalAPI) {
       id: string,
       definition: Function | Object
     ): Function | Object | void {
+      // 如果不给回调，就被当作访问操作
       if (!definition) {
         return this.options[type + 's'][id]
       } else {
@@ -32,6 +33,7 @@ export function initAssetRegisters (Vue: GlobalAPI) {
         if (type === 'directive' && typeof definition === 'function') {
           definition = { bind: definition, update: definition }
         }
+        // 最终this.options['components'|'directives'|'filters']会被Vue实例化的过程给注册掉
         this.options[type + 's'][id] = definition
         return definition
       }

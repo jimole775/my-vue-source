@@ -12,7 +12,7 @@ export function initProvide (vm: Component) {
       : provide
   }
 }
-// 把inject属性注册成响应属性
+// 把inject属性注册成响应式属性
 export function initInjections (vm: Component) {
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {

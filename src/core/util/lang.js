@@ -27,9 +27,11 @@ export function def (obj: Object, key: string, val: any, enumerable?: boolean) {
  */
 const bailRE = /[^\w.$]/
 export function parsePath (path: string): any {
+  // 过滤特殊字符？
   if (bailRE.test(path)) {
     return
   }
+  // 解析逗号运算符，并访问对象，有几个逗号，就访问几层
   const segments = path.split('.')
   return function (obj) {
     for (let i = 0; i < segments.length; i++) {

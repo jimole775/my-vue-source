@@ -25,19 +25,19 @@ export default class Watcher {
   vm: Component;
   expression: string;
   cb: Function;
-  id: number;
-  deep: boolean;
-  user: boolean;
-  lazy: boolean;
+  id: number; // 唯一标识
+  deep: boolean; // 是否监听目标的子集
+  user: boolean; // 在回调执行时，是否抛出异常
+  lazy: boolean; // computed专属属性
   sync: boolean;
-  dirty: boolean;
+  dirty: boolean; // computed专属属性，每次update的时候，都会重新设为true
   active: boolean;
   deps: Array<Dep>;
   newDeps: Array<Dep>;
   depIds: ISet;
   newDepIds: ISet;
-  getter: Function;
-  value: any;
+  getter: Function; // 用于解析监听对象
+  value: any; // 存储被监听对象的值
 
   constructor (
     vm: Component,
@@ -49,6 +49,7 @@ export default class Watcher {
     vm._watchers.push(this)
     // options
     if (options) {
+      // 转成 布尔 值
       this.deep = !!options.deep
       this.user = !!options.user
       this.lazy = !!options.lazy
@@ -198,6 +199,7 @@ export default class Watcher {
   /**
    * Evaluate the value of the watcher.
    * This only gets called for lazy watchers.
+   * computed 属性专用
    */
   evaluate () {
     this.value = this.get()
@@ -216,6 +218,7 @@ export default class Watcher {
 
   /**
    * Remove self from all dependencies' subscriber list.
+   * 取消所有订阅
    */
   teardown () {
     if (this.active) {
@@ -238,6 +241,7 @@ export default class Watcher {
  * Recursively traverse an object to evoke all converted
  * getters, so that every nested property inside the object
  * is collected as a "deep" dependency.
+ * 通过递归的形式去唤醒所有嵌套的属性
  */
 const seenObjects = new Set()
 function traverse (val: any) {
@@ -252,6 +256,7 @@ function _traverse (val: any, seen: ISet) {
     return
   }
   if (val.__ob__) {
+    // 唤醒语句
     const depId = val.__ob__.dep.id
     if (seen.has(depId)) {
       return
