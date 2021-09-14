@@ -61,9 +61,9 @@ export function initMixin (Vue: Class<Component>) {
     initEvents(vm) // 绑定 dom 事件
     initRender(vm) // 绑定 $createElement 方法
     callHook(vm, 'beforeCreate') // 调用钩子
-    initInjections(vm) // 初始化 inject 属性，resolve injections before data/props
+    initInjections(vm) // 初始化 inject 属性，从父级组件 provide 中拿
     initState(vm) // 初始化响应式属性，包括 data,props,methods,watch,computed
-    initProvide(vm) // resolve provide after data/props
+    initProvide(vm) // 初始化当前组件的 provide
     callHook(vm, 'created')
 
     /* istanbul ignore if */
@@ -97,8 +97,6 @@ function initInternalComponent (vm: Component, options: InternalComponentOptions
 }
 
 export function resolveConstructorOptions (Ctor: Class<Component>) {
-  // 既然Ctor就是Vue，那它怎么会有一个options属性
-  // 可以从参数项找到答案 Ctor: Class<Component> => /flow/component.js:5
   let options = Ctor.options
   if (Ctor.super) {
     // 递归一直追溯到最顶层的构造器
