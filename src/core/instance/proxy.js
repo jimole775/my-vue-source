@@ -6,7 +6,7 @@ import { warn, makeMap } from '../util/index'
 let initProxy
 
 if (process.env.NODE_ENV !== 'production') {
-  // 为什么使用 makeMap
+
   const allowedGlobals = makeMap(
     'Infinity,undefined,NaN,isFinite,isNaN,' +
     'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -14,7 +14,6 @@ if (process.env.NODE_ENV !== 'production') {
     'require' // for Webpack/Browserify
   )
 
-  // 主要逻辑
   const warnNonPresent = (target, key) => {
     warn(
       `Property or method "${key}" is not defined on the instance but ` +
@@ -32,7 +31,6 @@ if (process.env.NODE_ENV !== 'production') {
     Proxy.toString().match(/native code/)
 
   if (hasProxy) {
-    // 关键字预警
     const isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact')
     // config.keyCodes 在 check-keycodes 中调用
     // checkKeycodes方法，最终会绑定到vm._k上，在编译时会进行调用

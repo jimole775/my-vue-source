@@ -2,7 +2,7 @@ declare interface GlobalAPI {
   cid: number;
   options: Object;
   config: Config;
-  util: Object;
+  util: Util;
 
   extend: (options: Object) => Function;
   set: <T>(target: Object | Array<T>, key: string | number, value: T) => T;
@@ -19,3 +19,10 @@ declare interface GlobalAPI {
   // allow dynamic method registration
   [key: string]: any
 };
+
+declare interface Util {
+  warn: (msg: string, vm: Component) => void;
+  extend: (to: Object, _from: ?Object) => Object;
+  mergeOptions: (parent: Object, child: Object, vm?: Component) => Object;
+  defineReactive: (obj: Object, key: string, val: any, customSetter?: ?Function, shallow?: boolean) => void;
+}

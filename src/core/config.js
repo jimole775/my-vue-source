@@ -8,6 +8,7 @@ import {
 
 import { LIFECYCLE_HOOKS } from 'shared/constants'
 
+// 接口
 export type Config = {
   // user
   optionMergeStrategies: { [key: string]: Function };
@@ -35,6 +36,7 @@ export type Config = {
 export default ({
   /**
    * Option merge strategies (used in core/util/options)
+   * 参数合并策略
    */
   optionMergeStrategies: Object.create(null),
 
