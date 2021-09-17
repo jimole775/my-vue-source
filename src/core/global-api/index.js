@@ -45,6 +45,9 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   Vue.nextTick = nextTick
 
   Vue.options = Object.create(null)
+  // component, filter, directive
+  // 其实这3个全局方法，在调用的时候，也只是拿回一个配置参数而已
+  // 不需要太关注
   ASSET_TYPES.forEach(type => {
     Vue.options[type + 's'] = Object.create(null)
   })
@@ -53,6 +56,7 @@ export function initGlobalAPI (Vue: GlobalAPI) {
   // components with in Weex's multi-instance scenarios.
   Vue.options._base = Vue
 
+  // 合并 keep-alive 组件
   extend(Vue.options.components, builtInComponents)
 
   initUse(Vue)

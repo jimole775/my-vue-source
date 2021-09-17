@@ -27,10 +27,10 @@ export default class Watcher {
   cb: Function;
   id: number; // 唯一标识
   deep: boolean; // 是否监听目标的子集
-  user: boolean; // 在回调执行时，是否抛出异常
-  lazy: boolean; // computed专属属性
-  sync: boolean;
-  dirty: boolean; // computed专属属性，每次update的时候，都会重新设为true
+  user: boolean; // 对应vm.$options.watch属性
+  lazy: boolean; // 对应vm.$options.computed属性
+  sync: boolean; // 立即执行
+  dirty: boolean; // 对应vm.$options.computed属性，每次update的时候，都会重新设为true
   active: boolean;
   deps: Array<Dep>;
   newDeps: Array<Dep>;

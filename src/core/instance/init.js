@@ -32,6 +32,7 @@ export function initMixin (Vue: Class<Component>) {
     vm._isVue = true
     // merge options
     // 创建 组件 实例，后面会涉及 component 的讲解，这里先略过
+    // 一般new Vue的初始化流程不会走这里
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -39,9 +40,9 @@ export function initMixin (Vue: Class<Component>) {
       // 把 options 赋值到 vm.$options
       initInternalComponent(vm, options)
     } else {
-      console.log('equal?:', vm.constructor === Vue)
       // 合并所有参数，包括new Vue定制的参数，还有本身默认的参数
       vm.$options = mergeOptions(
+        // 
         // vm.constructor 就是 function Vue () {} 这个构造函数
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -100,6 +101,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {
     // 递归一直追溯到最顶层的构造器
+    // Ctor.super就是
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
     if (superOptions !== cachedSuperOptions) {

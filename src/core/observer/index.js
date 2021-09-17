@@ -179,7 +179,7 @@ export function defineReactive (
       } else {
         val = newVal
       }
-      childOb = !shallow && observe(newVal)
+      childOb = !shallow && observe(newVal) // 如果是val是对象，就封装成观察者
       dep.notify() // 派发vdom更新
     }
   })
