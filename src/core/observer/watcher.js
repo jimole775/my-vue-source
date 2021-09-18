@@ -162,11 +162,11 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
-    if (this.lazy) {
+    if (this.lazy) { // computed
       this.dirty = true
-    } else if (this.sync) {
+    } else if (this.sync) { // ???
       this.run()
-    } else {
+    } else { // 数据变更执行
       queueWatcher(this)
     }
   }

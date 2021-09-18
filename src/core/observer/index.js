@@ -191,7 +191,7 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal) // 如果是val是对象，就封装成观察者
-      dep.notify() // 派发vdom更新
+      dep.notify() // 监听data的变动，派发vdom更新
     }
   })
 }

@@ -164,7 +164,6 @@ function mergeAssets (
   key: string
 ): Object {
   const res = Object.create(parentVal || null)
-  debugger
   if (childVal) {
     // 如果是dev环境，就检测参数类型
     process.env.NODE_ENV !== 'production' && assertObjectType(key, childVal, vm)
