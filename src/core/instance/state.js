@@ -28,6 +28,7 @@ import {
   isReservedAttribute
 } from '../util/index'
 
+// 默认可枚举和可配置
 const sharedPropertyDefinition = {
   enumerable: true,
   configurable: true,
@@ -35,6 +36,7 @@ const sharedPropertyDefinition = {
   set: noop
 }
 
+// proxy 为了确保对象的统一性
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]
@@ -48,11 +50,13 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  debugger
   if (opts.props) initProps(vm, opts.props)
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
     initData(vm)
   } else {
+    // _data里面会并入 props,computed,data 的数据
     observe(vm._data = {}, true /* asRootData */)
   }
   if (opts.computed) initComputed(vm, opts.computed)
@@ -62,19 +66,27 @@ export function initState (vm: Component) {
 }
 
 function initProps (vm: Component, propsOptions: Object) {
+  // 因为props参数是通过vnode从上级组件导入到子组件的
+  // 所以，vm.$options.propsData 在生成vnode对象时已经处理过了
   const propsData = vm.$options.propsData || {}
+
+  // _props 就是默认的 options.props
   const props = vm._props = {}
+
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
+  // 之前缓存的props的key，但是没找到在哪进行缓存的
   const keys = vm.$options._propKeys = []
   const isRoot = !vm.$parent
   // root instance props should be converted
   observerState.shouldConvert = isRoot
   for (const key in propsOptions) {
     keys.push(key)
+    // 验证是否符合类型
     const value = validateProp(key, propsOptions, propsData, vm)
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 驼峰和'-'号的处理
       const hyphenatedKey = hyphenate(key)
       if (isReservedAttribute(hyphenatedKey) ||
           config.isReservedAttr(hyphenatedKey)) {
@@ -84,7 +96,9 @@ function initProps (vm: Component, propsOptions: Object) {
         )
       }
       defineReactive(props, key, value, () => {
+        // 当子组件已经更新完毕
         if (vm.$parent && !isUpdatingChildComponent) {
+          // 这里就是我们在子组件直接赋值给props对象时报的错
           warn(
             `Avoid mutating a prop directly since the value will be ` +
             `overwritten whenever the parent component re-renders. ` +
@@ -100,6 +114,7 @@ function initProps (vm: Component, propsOptions: Object) {
     // static props are already proxied on the component's prototype
     // during Vue.extend(). We only need to proxy props defined at
     // instantiation here.
+    // 在 Vue.extend() 已经被代理了，这里不太明白
     if (!(key in vm)) {
       proxy(vm, `_props`, key)
     }
@@ -142,6 +157,7 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // 使用 _data 来绑定代理
       proxy(vm, `_data`, key)
     }
   }

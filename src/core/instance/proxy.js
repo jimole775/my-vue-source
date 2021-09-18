@@ -66,7 +66,7 @@ if (process.env.NODE_ENV !== 'production') {
       return target[key]
     }
   }
-
+  // 代理，主要是提供预警信息的
   initProxy = function initProxy (vm) {
     if (hasProxy) {
       // determine which proxy handler to use

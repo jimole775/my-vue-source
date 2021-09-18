@@ -20,16 +20,20 @@ let uid = 0
  * A watcher parses an expression, collects dependencies,
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
+ * watcher只封装3种表达式，
+ * 1. computed 属性
+ * 2. $watch 方法 或者 options.watch 属性
+ * 3. updateComponent 方法
  */
 export default class Watcher {
   vm: Component;
   expression: string;
   cb: Function;
   id: number; // 唯一标识
-  deep: boolean; // 是否监听目标的子集
-  user: boolean; // 对应vm.$options.watch属性
-  lazy: boolean; // 对应vm.$options.computed属性
-  sync: boolean; // 立即执行
+  deep: boolean; // 是否监听目标的子集, 对应 watch 属性的 deep 参数
+  user: boolean; // 判断是否是来自 vm.$options.watch 属性
+  lazy: boolean; // 判断是否是来自 vm.$options.computed 属性
+  sync: boolean; // 同步执行
   dirty: boolean; // 对应vm.$options.computed属性，每次update的时候，都会重新设为true
   active: boolean;
   deps: Array<Dep>;
@@ -131,6 +135,7 @@ export default class Watcher {
 
   /**
    * Clean up for dependency collection.
+   * 
    */
   cleanupDeps () {
     let i = this.deps.length
@@ -153,6 +158,7 @@ export default class Watcher {
   /**
    * Subscriber interface.
    * Will be called when a dependency changes.
+   * 组件更新
    */
   update () {
     /* istanbul ignore else */
@@ -168,6 +174,7 @@ export default class Watcher {
   /**
    * Scheduler job interface.
    * Will be called by the scheduler.
+   * 重新运算get，如果是 $watcher 就调用 callback
    */
   run () {
     if (this.active) {
@@ -218,7 +225,7 @@ export default class Watcher {
 
   /**
    * Remove self from all dependencies' subscriber list.
-   * 取消所有订阅
+   * 在$destory中，会取消所有订阅
    */
   teardown () {
     if (this.active) {
@@ -241,7 +248,7 @@ export default class Watcher {
  * Recursively traverse an object to evoke all converted
  * getters, so that every nested property inside the object
  * is collected as a "deep" dependency.
- * 通过递归的形式去唤醒所有嵌套的属性
+ * 通过递归的形式去唤醒所有嵌套对象的属性
  */
 const seenObjects = new Set()
 function traverse (val: any) {

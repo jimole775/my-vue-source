@@ -86,9 +86,11 @@ export function _createElement (
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
+    // simpleNormalizeChildren 未能解析清楚
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // 如果是字符串，就认为是默认的标签，或者已经全局注册的组件名
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)

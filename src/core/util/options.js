@@ -24,6 +24,7 @@ import {
  * Option overwriting strategies are functions that handle
  * how to merge a parent option value and a child option
  * value into the final value.
+ * 这里会给每个属性制定参数合并的策略
  */
 const strats = config.optionMergeStrategies
 
@@ -163,14 +164,16 @@ function mergeAssets (
   key: string
 ): Object {
   const res = Object.create(parentVal || null)
+  debugger
   if (childVal) {
+    // 如果是dev环境，就检测参数类型
     process.env.NODE_ENV !== 'production' && assertObjectType(key, childVal, vm)
     return extend(res, childVal)
   } else {
     return res
   }
 }
-
+// filter component directive
 ASSET_TYPES.forEach(function (type) {
   strats[type + 's'] = mergeAssets
 })
@@ -245,6 +248,7 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
 
 /**
  * Validate component names
+ * 检查组件是否是内部组件
  */
 function checkComponents (options: Object) {
   for (const key in options.components) {
@@ -261,6 +265,7 @@ function checkComponents (options: Object) {
 /**
  * Ensure all props option syntax are normalized into the
  * Object-based format.
+ * 检测 props 属性的type是否符合限定的类型
  */
 function normalizeProps (options: Object, vm: ?Component) {
   const props = options.props
@@ -298,6 +303,8 @@ function normalizeProps (options: Object, vm: ?Component) {
 
 /**
  * Normalize all injections into Object-based format
+ * 检测 inject 属性的type是否符合限定的类型,
+ * 并把 inject 强转成 Object 类型
  */
 function normalizeInject (options: Object, vm: ?Component) {
   const inject = options.inject
@@ -324,6 +331,7 @@ function normalizeInject (options: Object, vm: ?Component) {
 
 /**
  * Normalize raw function directives into object format.
+ * 检测 directives 属性的type是否符合限定的类型
  */
 function normalizeDirectives (options: Object) {
   const dirs = options.directives
@@ -337,6 +345,7 @@ function normalizeDirectives (options: Object) {
   }
 }
 
+// 检测是否是对象
 function assertObjectType (name: string, value: any, vm: ?Component) {
   if (!isPlainObject(value)) {
     warn(
@@ -350,12 +359,14 @@ function assertObjectType (name: string, value: any, vm: ?Component) {
 /**
  * Merge two option objects into a new one.
  * Core utility used in both instantiation and inheritance.
+ * 树级合并
  */
 export function mergeOptions (
   parent: Object,
   child: Object,
   vm?: Component
 ): Object {
+  // 检查组件是否是内部组件
   if (process.env.NODE_ENV !== 'production') {
     checkComponents(child)
   }
@@ -364,6 +375,7 @@ export function mergeOptions (
     child = child.options
   }
 
+  // 检查 props, inject, directives 的类型
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)

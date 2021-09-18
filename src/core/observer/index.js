@@ -44,11 +44,14 @@ export class Observer {
     def(value, '__ob__', this)
     if (Array.isArray(value)) {
       const augment = hasProto
-        ? protoAugment
-        : copyAugment
+        ? protoAugment // 如果有原型对象，就用 arrayMethods 去覆盖它的原型对象
+        : copyAugment // 否则就去手动绑定 arrayMethods
+      // 这里主要是截断这个数组的原型链，看作性能优化
       augment(value, arrayMethods, arrayKeys)
+      // 递归，反正最终都是对每个对象的属性进行响应式封装
       this.observeArray(value)
     } else {
+      // 最终操作，遍历属性，逐一进行封装
       this.walk(value)
     }
   }
@@ -109,6 +112,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     return
   }
   let ob: Observer | void
+  // 判断有没有被 Observer封装过
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
@@ -118,6 +122,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 如果 value 是一个对象，就会进行封装
     ob = new Observer(value)
   }
   if (asRootData && ob) {
@@ -136,6 +141,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 创建一个watcher管理器
   const dep = new Dep()
   // 获取对象的属性描述
   const property = Object.getOwnPropertyDescriptor(obj, key)
@@ -147,15 +153,20 @@ export function defineReactive (
   const getter = property && property.get
   const setter = property && property.set
 
+  // 如果 val 是对象，就继续 封装 observe，这是一个深递归
+  // 所以 大家以后定义 data 的时候，尽量不要嵌套太多层
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
+      // 如果当前已经watcher
       if (Dep.target) {
+        // dep.subs 加一个watcher
         dep.depend()
         if (childOb) {
+          // 子集的嵌套，继续给 dep.subs 加watcher
           childOb.dep.depend()
           if (Array.isArray(value)) {
             dependArray(value)
@@ -200,7 +211,7 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     target[key] = val
     return val
   }
-  const ob = (target: any).__ob__
+  const ob = target.__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +

@@ -40,11 +40,9 @@ export function initMixin (Vue: Class<Component>) {
       // 把 options 赋值到 vm.$options
       initInternalComponent(vm, options)
     } else {
-      // 合并所有参数，包括new Vue定制的参数，还有本身默认的参数
+      // 合并所有参数，包括含有所有子集的参数
       vm.$options = mergeOptions(
-        // 
-        // vm.constructor 就是 function Vue () {} 这个构造函数
-        resolveConstructorOptions(vm.constructor),
+        resolveConstructorOptions(vm.constructor), // 递归出顶层构造器的参数
         options || {},
         vm
       )
@@ -97,6 +95,7 @@ function initInternalComponent (vm: Component, options: InternalComponentOptions
   }
 }
 
+// 递归出顶级的 options
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {

@@ -3,6 +3,7 @@
 import { warn } from '../util/index'
 import { hasSymbol } from 'core/util/env'
 import { defineReactive, observerState } from '../observer/index'
+import { debuglog } from 'util'
 
 export function initProvide (vm: Component) {
   const provide = vm.$options.provide
@@ -36,11 +37,13 @@ export function initInjections (vm: Component) {
   }
 }
 
+// 因为inject是给子组件用的，所以这里把 inject 的数据 和 父级组件的 provide 属性关联
 export function resolveInject (inject: any, vm: Component): ?Object {
   if (inject) {
     // inject is :any because flow is not smart enough to figure out cached
     const result = Object.create(null)
     const keys = hasSymbol
+        // 通过反射拿到非原型链上的全部属性，包括不可枚举的属性
         ? Reflect.ownKeys(inject).filter(key => {
           /* istanbul ignore next */
           return Object.getOwnPropertyDescriptor(inject, key).enumerable
