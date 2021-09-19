@@ -20,6 +20,7 @@ let uid = 0
  * A watcher parses an expression, collects dependencies,
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
+ * 
  * watcher只封装3种表达式，
  * 1. computed 属性
  * 2. $watch 方法 或者 options.watch 属性
@@ -35,7 +36,7 @@ export default class Watcher {
   lazy: boolean; // 判断是否是来自 vm.$options.computed 属性
   sync: boolean; // 同步执行
   dirty: boolean; // 对应vm.$options.computed属性，每次update的时候，都会重新设为true
-  active: boolean;
+  active: boolean; // 同一时间只有watcher被激活
   deps: Array<Dep>;
   newDeps: Array<Dep>;
   depIds: ISet;

@@ -159,7 +159,9 @@ export function defineReactive (
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
+    // 响应式源点
     get: function reactiveGetter () {
+      debugger
       const value = getter ? getter.call(obj) : val
       // 如果当前已经watcher
       if (Dep.target) {
@@ -175,7 +177,9 @@ export function defineReactive (
       }
       return value
     },
+    // 响应式源点
     set: function reactiveSetter (newVal) {
+      debugger
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
@@ -236,7 +240,7 @@ export function del (target: Array<any> | Object, key: any) {
     target.splice(key, 1)
     return
   }
-  const ob = (target: any).__ob__
+  const ob = target.__ob__
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid deleting properties on a Vue instance or its root $data ' +

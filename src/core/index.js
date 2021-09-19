@@ -1,4 +1,4 @@
-import Vue from './instance/index'
+import Vue from './instance/index' /** vue核心 */
 import { initGlobalAPI } from './global-api/index'
 import { isServerRendering } from 'core/util/env'
 

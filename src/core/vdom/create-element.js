@@ -84,6 +84,7 @@ export function _createElement (
     children.length = 0
   }
   if (normalizationType === ALWAYS_NORMALIZE) {
+    // this.$createElement()
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
     // simpleNormalizeChildren 未能解析清楚
